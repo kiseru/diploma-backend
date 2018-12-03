@@ -9,6 +9,6 @@ data class Theme(@Id
                  @Column(nullable = false, unique = true)
                  var name: String = "",
                  @Column(nullable = false)
-                 var description: String,
+                 var description: String = "",
                  @OneToMany(mappedBy = "theme")
                  val tests: Set<Test> = HashSet())
