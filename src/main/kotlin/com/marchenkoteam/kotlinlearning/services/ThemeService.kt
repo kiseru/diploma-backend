@@ -1,5 +1,6 @@
 package com.marchenkoteam.kotlinlearning.services
 
+import com.marchenkoteam.kotlinlearning.dto.TestDto
 import com.marchenkoteam.kotlinlearning.dto.ThemeDto
 import com.marchenkoteam.kotlinlearning.exceptions.BadRequestException
 import com.marchenkoteam.kotlinlearning.forms.ThemeForm
@@ -24,4 +25,11 @@ class ThemeService @Autowired constructor(private val themeRepository: ThemeRepo
     }
 
     fun deleteById(id: Long) = themeRepository.deleteById(id)
+
+
+    fun findByThemeId(themeId: Long): List<TestDto> {
+        val testList = themeRepository.findTestsByThemeId(themeId)
+                .orElseThrow { BadRequestException("No tests found for that theme.") }
+        return testList.map { TestDto(it) }
+    }
 }

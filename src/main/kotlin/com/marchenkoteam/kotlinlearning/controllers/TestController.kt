@@ -34,7 +34,4 @@ class TestController @Autowired constructor(private val testService: TestService
                     @PathVariable("id") id: Long) {
         testService.deleteById(id)
     }
-
-    @GetMapping("/theme/{id}")
-    fun getTestByTheme(@PathVariable("id") id: Long): List<TestDto> = testService.findByThemeId(id)
 }

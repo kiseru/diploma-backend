@@ -16,12 +16,6 @@ class TestService @Autowired constructor(private val testRepository: TestReposit
         return TestDto(test)
     }
 
-    fun findByThemeId(themeId: Long): List<TestDto> {
-        val testList = testRepository.findByThemeId(themeId)
-                .orElseThrow { BadRequestException("No tests found for that theme.") }
-        return testList.map { TestDto(it) }
-    }
-
     fun save(testForm: TestForm) {
         testRepository.save(testForm.getTest())
     }

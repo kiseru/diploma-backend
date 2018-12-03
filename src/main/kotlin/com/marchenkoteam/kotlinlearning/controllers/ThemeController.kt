@@ -1,5 +1,6 @@
 package com.marchenkoteam.kotlinlearning.controllers
 
+import com.marchenkoteam.kotlinlearning.dto.TestDto
 import com.marchenkoteam.kotlinlearning.dto.ThemeDto
 import com.marchenkoteam.kotlinlearning.forms.ThemeForm
 import com.marchenkoteam.kotlinlearning.services.ThemeService
@@ -37,4 +38,7 @@ class ThemeController @Autowired constructor(private val themeService: ThemeServ
                     @PathVariable("id") id: Long) {
         themeService.deleteById(id)
     }
+
+    @GetMapping("/theme/{id}")
+    fun getTestByTheme(@PathVariable("id") id: Long): List<TestDto> = themeService.findByThemeId(id)
 }
