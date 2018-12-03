@@ -38,7 +38,6 @@ class ThemeController @Autowired constructor(private val themeService: ThemeServ
                     @PathVariable("id") id: Long) {
         themeService.deleteById(id)
     }
-
-    @GetMapping("/theme/{id}")
+    @GetMapping("/{id}/tests")
     fun getTestByTheme(@PathVariable("id") id: Long): List<TestDto> = themeService.findByThemeId(id)
 }

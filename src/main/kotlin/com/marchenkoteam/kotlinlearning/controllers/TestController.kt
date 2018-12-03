@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/tests")
 class TestController @Autowired constructor(private val testService: TestService) {
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping
+    fun getTests(): List<TestDto> = testService.findAll()
+
     @GetMapping("{id}")
     fun getTest(@PathVariable("id") id: Long): TestDto = testService.findById(id)
 

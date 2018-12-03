@@ -4,12 +4,13 @@ import com.marchenkoteam.kotlinlearning.dto.TestDto
 import com.marchenkoteam.kotlinlearning.dto.ThemeDto
 import com.marchenkoteam.kotlinlearning.exceptions.BadRequestException
 import com.marchenkoteam.kotlinlearning.forms.ThemeForm
+import com.marchenkoteam.kotlinlearning.repositories.TestRepository
 import com.marchenkoteam.kotlinlearning.repositories.ThemeRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class ThemeService @Autowired constructor(private val themeRepository: ThemeRepository) {
+class ThemeService @Autowired constructor(private val themeRepository: ThemeRepository, private val testRepository: TestRepository) {
 
     fun findAll() = themeRepository.findAll()
             .map(::ThemeDto)
@@ -28,8 +29,8 @@ class ThemeService @Autowired constructor(private val themeRepository: ThemeRepo
 
 
     fun findByThemeId(themeId: Long): List<TestDto> {
-        val testList = themeRepository.findTestsByThemeId(themeId)
+        val testList = testRepository.findTestsByThemeId(themeId)
                 .orElseThrow { BadRequestException("No tests found for that theme.") }
-        return testList.map { TestDto(it) }
+        return testList.map (::TestDto)
     }
 }

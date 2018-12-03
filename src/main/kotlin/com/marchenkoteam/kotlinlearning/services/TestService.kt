@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class TestService @Autowired constructor(private val testRepository: TestRepository) {
 
-    fun findById(id: Long): com.marchenkoteam.kotlinlearning.dto.TestDto {
+    fun findById(id: Long): TestDto {
         val test = testRepository.findById(id)
                 .orElseThrow { BadRequestException("No such test.") }
         return TestDto(test)
@@ -21,4 +21,6 @@ class TestService @Autowired constructor(private val testRepository: TestReposit
     }
 
     fun deleteById(id: Long) = testRepository.deleteById(id)
+
+    fun findAll(): List<TestDto> = testRepository.findAll().map (::TestDto)
 }

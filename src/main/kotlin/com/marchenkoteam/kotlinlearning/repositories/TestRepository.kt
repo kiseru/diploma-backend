@@ -7,4 +7,7 @@ import java.util.*
 
 interface TestRepository : JpaRepository<Test, Long> {
 
+    @Query(value = "SELECT * FROM test WHERE theme_id = ?1", nativeQuery = true)
+    fun findTestsByThemeId(themeId: Long): Optional<List<Test>>
+
 }
