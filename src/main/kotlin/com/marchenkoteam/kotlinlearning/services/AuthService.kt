@@ -1,13 +1,17 @@
 package com.marchenkoteam.kotlinlearning.services
 
 import com.marchenkoteam.kotlinlearning.dto.TokenDto
+import com.marchenkoteam.kotlinlearning.dto.UserDto
 import com.marchenkoteam.kotlinlearning.exceptions.InvalidLoginOrPasswordException
+import com.marchenkoteam.kotlinlearning.exceptions.NotFoundException
 import com.marchenkoteam.kotlinlearning.exceptions.PasswordsNotMatchedException
 import com.marchenkoteam.kotlinlearning.forms.LoginForm
 import com.marchenkoteam.kotlinlearning.forms.RegistrationForm
 import com.marchenkoteam.kotlinlearning.models.User
 import com.marchenkoteam.kotlinlearning.repositories.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -42,5 +46,13 @@ class AuthService @Autowired constructor(private val passwordEncoder: PasswordEn
             throw InvalidLoginOrPasswordException()
 
         return tokenService.getToken(user)
+    }
+
+    fun getMe(): UserDto {
+        val auth = SecurityContextHolder.getContext().authentication
+        val userDetails = auth.details as UserDetails
+        val user = userRepository.findByEmail(userDetails.username)
+                .orElseThrow { NotFoundException("No such user with email ${userDetails.username}.") }
+        return UserDto(user)
     }
 }
