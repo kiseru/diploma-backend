@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
+@CrossOrigin
 @RestController
 @RequestMapping("/tests")
 class TestController @Autowired constructor(private val testService: TestService) {
@@ -15,7 +16,7 @@ class TestController @Autowired constructor(private val testService: TestService
     @GetMapping
     fun getTests(): List<TestDto> = testService.findAll()
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     fun getTest(@PathVariable("id") id: Long): TestDto = testService.findById(id)
 
     @PreAuthorize("hasAuthority('ADMIN')")

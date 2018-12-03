@@ -22,5 +22,5 @@ class TestService @Autowired constructor(private val testRepository: TestReposit
 
     fun deleteById(id: Long) = testRepository.deleteById(id)
 
-    fun findAll(): List<TestDto> = testRepository.findAll().map (::TestDto)
+    fun findAll(): List<TestDto> = testRepository.findAll().map(::TestDto)
 }

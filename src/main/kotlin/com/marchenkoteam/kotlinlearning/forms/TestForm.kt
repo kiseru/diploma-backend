@@ -14,6 +14,6 @@ data class TestForm(val id: Long,
                     val outputFilePath: String) {
 
     @JsonIgnore
-fun getTest() = Test(id, rank = rank, name = name, timeLimit = timeLimit, description = description,
+    fun getTest() = Test(id, rank = rank, name = name, timeLimit = timeLimit, description = description,
             inputFilePath = inputFilePath, outputFilePath = outputFilePath, theme = Theme(themeId))
 }
