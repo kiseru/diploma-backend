@@ -21,6 +21,6 @@ class TokenService {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact()
 
-        return TokenDto(jwtToken)
+        return TokenDto(jwtToken, user.role.toString())
     }
 }

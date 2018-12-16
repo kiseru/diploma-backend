@@ -1,6 +1,7 @@
 package com.marchenkoteam.kotlinlearning.dto
 
 class TokenDto(var token: String,
+               var role: String,
                var expired: String) {
-    constructor(token: String) : this(token, "")
+    constructor(token: String, role: String) : this(token, role, "")
 }
