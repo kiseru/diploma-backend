@@ -14,7 +14,8 @@ import org.springframework.stereotype.Service
 @Service
 class ThemeService @Autowired constructor(private val themeRepository: ThemeRepository,
                                           private val userThemeRankRepository: UserThemeRankRepository,
-                                          private val userTestRepository: UserTestRepository) {
+                                          private val userTestRepository: UserTestRepository,
+                                          private val authService: AuthService) {
 
     fun findAll() = themeRepository.findAll()
             .map(::ThemeDto)
@@ -32,11 +33,12 @@ class ThemeService @Autowired constructor(private val themeRepository: ThemeRepo
 
     fun deleteById(id: Long) = themeRepository.deleteById(id)
 
-    fun getTest(id: Long, userId: Long): TestDto {
+    fun getTest(id: Long): TestDto {
+        val user = authService.getMe()
         val theme = themeRepository.findById(id)
                 .orElseThrow { BadRequestException("No such theme.") }
-        val rank = userThemeRankRepository.findByUserId(userId, id)
-        var userTestsList = userTestRepository.getByUserId(userId)
+        val rank = userThemeRankRepository.findByUserId(user.id, id)
+        var userTestsList = userTestRepository.getByUserId(user.id)
         userTestsList = userTestsList.filter { it.status == UserTest.TestStatus.UNDONE }
         val testList = userTestsList.map { it.test }
         val resultList = testList.filter { it.rank == rank }.filter { it.themeId == theme.id } as ArrayList

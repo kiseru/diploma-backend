@@ -13,8 +13,8 @@ data class Test(@Id
                 @Column(nullable = false)
                 var rank: Int = 1,
                 @Column(nullable = false)
-                var inputFilePath: String = "",
+                var inputData: String = "",
                 @Column(nullable = false)
-                var outputFilePath: String = "",
+                var outputData: String = "",
                 @Column(name = "theme_id")
                 var themeId: Long = 0)

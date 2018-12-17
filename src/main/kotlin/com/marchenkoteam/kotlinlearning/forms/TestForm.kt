@@ -9,10 +9,10 @@ data class TestForm(val id: Long,
                     val themeId: Long,
                     val timeLimit: Long,
                     val description: String,
-                    val inputFilePath: String,
-                    val outputFilePath: String) {
+                    val inputData: String,
+                    val outputData: String) {
 
     @JsonIgnore
     fun getTest() = Test(id, rank = rank, name = name, timeLimit = timeLimit, description = description,
-            inputFilePath = inputFilePath, outputFilePath = outputFilePath, themeId = themeId)
+            inputData = inputData, outputData = outputData, themeId = themeId)
 }

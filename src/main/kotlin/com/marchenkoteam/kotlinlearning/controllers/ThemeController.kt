@@ -40,5 +40,5 @@ class ThemeController @Autowired constructor(private val themeService: ThemeServ
     }
 
     @GetMapping("{id}/test")
-    fun getTest(@PathVariable("id") id: Long, userId: Long) = themeService.getTest(id, userId)
+    fun getTest(@PathVariable("id") id: Long) = themeService.getTest(id)
 }
