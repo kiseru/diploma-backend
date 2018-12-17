@@ -10,5 +10,6 @@ data class Theme(@Id
                  var name: String = "",
                  @Column(nullable = false)
                  var description: String = "",
-                 @OneToMany(mappedBy = "theme")
+                 @OneToMany
+                 @JoinColumn(name = "theme_id")
                  val tests: Set<Test> = HashSet())

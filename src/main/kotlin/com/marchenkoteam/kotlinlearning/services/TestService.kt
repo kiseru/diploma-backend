@@ -16,8 +16,9 @@ class TestService @Autowired constructor(private val testRepository: TestReposit
         return TestDto(test)
     }
 
-    fun save(testForm: TestForm) {
-        testRepository.save(testForm.getTest())
+    fun save(testForm: TestForm): TestDto {
+        val test = testRepository.save(testForm.getTest())
+        return TestDto(test)
     }
 
     fun deleteById(id: Long) = testRepository.deleteById(id)

@@ -6,9 +6,6 @@ import javax.persistence.*
 data class Test(@Id
                 @GeneratedValue(strategy = GenerationType.IDENTITY)
                 var id: Long = 0,
-                @ManyToOne
-                @JoinColumn(name = "theme_id")
-                var theme: Theme,
                 @Column(name = "time_limit")
                 var timeLimit: Long = 0,
                 var name: String = "",
@@ -19,5 +16,5 @@ data class Test(@Id
                 var inputFilePath: String = "",
                 @Column(nullable = false)
                 var outputFilePath: String = "",
-                @OneToMany(mappedBy = "test")
-                var userTest: Set<UserTest> = HashSet())
+                @Column(name = "theme_id")
+                var themeId: Long = 0)

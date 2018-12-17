@@ -1,6 +1,7 @@
 package com.marchenkoteam.kotlinlearning.services
 
 import com.marchenkoteam.kotlinlearning.dto.TokenDto
+import com.marchenkoteam.kotlinlearning.exceptions.BadRequestException
 import com.marchenkoteam.kotlinlearning.exceptions.InvalidLoginOrPasswordException
 import com.marchenkoteam.kotlinlearning.exceptions.PasswordsNotMatchedException
 import com.marchenkoteam.kotlinlearning.forms.LoginForm
@@ -43,4 +44,7 @@ class UserService @Autowired constructor(private val passwordEncoder: PasswordEn
 
         return tokenService.getToken(user)
     }
+
+    fun getUserByEmail(email: String): User = userRepository.findByEmail(email)
+            .orElseThrow {InvalidLoginOrPasswordException()}
 }

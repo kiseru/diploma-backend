@@ -14,7 +14,7 @@ class TestController @Autowired constructor(private val testService: TestService
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
-    fun getTests(): List<TestDto> = testService.findAll()
+    fun getTests(@RequestHeader authToken: String): List<TestDto> = testService.findAll()
 
     @GetMapping("/{id}")
     fun getTest(@PathVariable("id") id: Long): TestDto = testService.findById(id)
@@ -22,15 +22,15 @@ class TestController @Autowired constructor(private val testService: TestService
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     fun saveTest(@RequestHeader authToken: String,
-                 @RequestBody testForm: TestForm) {
-        testService.save(testForm)
+                 @RequestBody testForm: TestForm): TestDto {
+        return testService.save(testForm)
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     fun updateTheme(@RequestHeader authToken: String,
-                    @RequestBody testForm: TestForm) {
-        testService.save(testForm)
+                    @RequestBody testForm: TestForm): TestDto {
+        return testService.save(testForm)
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

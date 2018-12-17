@@ -16,6 +16,4 @@ data class User(@Id
                 var password: String = "",
                 @Column(nullable = false)
                 @Enumerated(EnumType.STRING)
-                var role: Role = Role.USER,
-                @OneToMany(mappedBy = "user")
-                var userTest: Set<UserTest> = HashSet())
+                var role: Role = Role.USER)
