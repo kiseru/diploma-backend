@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 class Test(@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long = 0,
-           @ManyToOne(cascade = [CascadeType.ALL]) @JoinColumn(name = "theme_id") var theme: Theme,
+           @ManyToOne @JoinColumn(nullable = false) var theme: Theme,
            @Column(nullable = false) var name: String = "",
            @Column(nullable = false) var description: String = "",
            @Column(nullable = false) var inputData: String = "",

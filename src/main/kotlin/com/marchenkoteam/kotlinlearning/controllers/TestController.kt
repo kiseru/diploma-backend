@@ -1,6 +1,7 @@
 package com.marchenkoteam.kotlinlearning.controllers
 
 import com.marchenkoteam.kotlinlearning.dto.TestDto
+import com.marchenkoteam.kotlinlearning.forms.SkillForm
 import com.marchenkoteam.kotlinlearning.forms.TestForm
 import com.marchenkoteam.kotlinlearning.services.TestService
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,4 +33,19 @@ class TestController @Autowired constructor(private val testService: TestService
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     fun delete(@RequestHeader authToken: String, @PathVariable("id") id: Long) = testService.deleteById(id)
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/{id}/skill")
+    fun addSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
+                 @RequestBody skillForm: SkillForm) = testService.addSkill(skillForm, id)
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/{id}/skill")
+    fun updateSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
+                    @RequestBody skillForm: SkillForm) = testService.updateSkill(skillForm, id)
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/{id}/skill")
+    fun deleteSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
+                    @RequestBody skillForm: SkillForm) = testService.deleteSkill(skillForm, id)
 }
