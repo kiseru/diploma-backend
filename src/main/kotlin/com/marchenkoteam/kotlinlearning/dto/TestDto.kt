@@ -1,5 +1,6 @@
 package com.marchenkoteam.kotlinlearning.dto
 
+import com.marchenkoteam.kotlinlearning.models.Skill
 import com.marchenkoteam.kotlinlearning.models.Test
 import com.marchenkoteam.kotlinlearning.models.TestSkill
 import com.marchenkoteam.kotlinlearning.models.Theme
@@ -13,7 +14,11 @@ data class TestDto(val id: Long, val name: String, val description: String, val 
         constructor(theme: Theme) : this(theme.id, theme.name, theme.description)
     }
 
-    data class TestSkillDto(var name: String, var value: Int) {
-        constructor(testSkill: TestSkill) : this(testSkill.name, testSkill.value)
+    data class TestSkillDto(val id: Long, var value: Int, val skill: SkillDto) {
+        constructor(testSkill: TestSkill) : this(testSkill.skill.id, testSkill.value, SkillDto(testSkill.skill))
+    }
+
+    class SkillDto(val id: Long, val name: String) {
+        constructor(skill: Skill) : this(skill.id, skill.name)
     }
 }

@@ -7,4 +7,5 @@ class Theme(@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long
             @Column(nullable = false, unique = true) var name: String = "",
             @Column(nullable = false) var description: String,
             @OneToMany(mappedBy = "theme", cascade = [CascadeType.ALL]) val tests: Set<Test> = HashSet(),
-            @OneToMany(mappedBy = "theme", cascade = [CascadeType.ALL]) val themeSkills: Set<ThemeSkill> = HashSet())
+            @OneToMany(mappedBy = "theme", cascade = [CascadeType.ALL]) val themeSkills: Set<ThemeSkill> = HashSet(),
+            @OneToMany(mappedBy = "theme", cascade = [CascadeType.ALL]) val userThemes: Set<UserTheme> = HashSet())

@@ -5,7 +5,6 @@ import com.marchenkoteam.kotlinlearning.exceptions.BadRequestException
 import com.marchenkoteam.kotlinlearning.exceptions.NotFoundException
 import com.marchenkoteam.kotlinlearning.forms.TestForm
 import com.marchenkoteam.kotlinlearning.models.Test
-import com.marchenkoteam.kotlinlearning.models.TestSkill
 import com.marchenkoteam.kotlinlearning.repositories.TestRepository
 import com.marchenkoteam.kotlinlearning.repositories.TestSkillRepository
 import com.marchenkoteam.kotlinlearning.repositories.ThemeRepository
@@ -31,13 +30,7 @@ class TestService @Autowired constructor(private val testSkillRepository: TestSk
         var test = Test(id = testForm.id, theme = theme, name = testForm.name, description = testForm.description,
                         inputData = testForm.inputData, outputData = testForm.outputData)
         test = testRepository.save(test)
-
-        testSkillRepository.findAll()
-                .filter { it.test.id == test.id }
-                .forEach(testSkillRepository::delete)
-
-        testForm.skills.forEach { testSkillRepository.save(TestSkill(name = it.name, value = it.value, test = test)) }
-        return TestDto(testRepository.findById(test.id).orElseThrow { NotFoundException("Test not found.") })
+        return TestDto(test)
     }
 
     fun deleteById(id: Long) {
