@@ -8,14 +8,16 @@ import com.marchenkoteam.kotlinlearning.models.UserTest
 import com.marchenkoteam.kotlinlearning.repositories.ThemeRepository
 import com.marchenkoteam.kotlinlearning.repositories.UserTestRepository
 import com.marchenkoteam.kotlinlearning.repositories.UserThemeRankRepository
+import com.marchenkoteam.kotlinlearning.security.details.UserDetailsImpl
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 
 @Service
 class ThemeService @Autowired constructor(private val themeRepository: ThemeRepository,
                                           private val userThemeRankRepository: UserThemeRankRepository,
-                                          private val userTestRepository: UserTestRepository,
-                                          private val authService: AuthService) {
+                                          private val userTestRepository: UserTestRepository) {
 
     fun findAll() = themeRepository.findAll()
             .map(::ThemeDto)
@@ -34,11 +36,12 @@ class ThemeService @Autowired constructor(private val themeRepository: ThemeRepo
     fun deleteById(id: Long) = themeRepository.deleteById(id)
 
     fun getTest(id: Long): TestDto {
-        val user = authService.getMe()
+        val auth = SecurityContextHolder.getContext().authentication
+        val userDetails = auth.details as UserDetailsImpl
         val theme = themeRepository.findById(id)
                 .orElseThrow { BadRequestException("No such theme.") }
-        val rank = userThemeRankRepository.findByUserId(user.id, id)
-        var userTestsList = userTestRepository.getByUserId(user.id)
+        val rank = userThemeRankRepository.findByUserIdAndThemeId(userDetails.user.id, id)?.rank
+        var userTestsList = userTestRepository.getByUserId(userDetails.user.id)
         userTestsList = userTestsList.filter { it.status == UserTest.TestStatus.UNDONE }
         val testList = userTestsList.map { it.test }
         val resultList = testList.filter { it.rank == rank }.filter { it.themeId == theme.id } as ArrayList

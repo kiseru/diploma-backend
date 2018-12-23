@@ -39,6 +39,7 @@ class ThemeController @Autowired constructor(private val themeService: ThemeServ
         themeService.deleteById(id)
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("{id}/test")
-    fun getTest(@PathVariable("id") id: Long) = themeService.getTest(id)
+    fun getTest(@RequestHeader authToken: String, @PathVariable("id") id: Long) = themeService.getTest(id)
 }

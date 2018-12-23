@@ -28,14 +28,14 @@ class TestController @Autowired constructor(private val testService: TestService
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
-    fun updateTheme(@RequestHeader authToken: String,
+    fun updateTest(@RequestHeader authToken: String,
                     @RequestBody testForm: TestForm): TestDto {
         return testService.save(testForm)
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    fun deleteTheme(@RequestHeader authToken: String,
+    fun deleteTest(@RequestHeader authToken: String,
                     @PathVariable("id") id: Long) {
         testService.deleteById(id)
     }

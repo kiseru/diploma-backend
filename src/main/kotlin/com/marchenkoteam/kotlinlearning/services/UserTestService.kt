@@ -1,6 +1,7 @@
 package com.marchenkoteam.kotlinlearning.services
 
 import com.marchenkoteam.kotlinlearning.forms.UserTestForm
+import com.marchenkoteam.kotlinlearning.models.UserTest
 import com.marchenkoteam.kotlinlearning.repositories.UserTestRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -20,4 +21,12 @@ class UserTestService @Autowired constructor(private val userTestRepository: Use
             save(userTestForm)
         }
     }
+
+    fun changeStatus(status: UserTest.TestStatus, testId: Long, userId: Long) {
+        val userTest = userTestRepository.getByTestIdAndUserId(testId, userId)
+        userTest.status = status
+        userTestRepository.save(userTest)
+    }
+
+    fun findByTestIdAndUserId(testId: Long, userId: Long): UserTest = userTestRepository.getByTestIdAndUserId(testId, userId)
 }
