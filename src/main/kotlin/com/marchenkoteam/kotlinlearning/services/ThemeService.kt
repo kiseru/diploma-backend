@@ -6,6 +6,8 @@ import com.marchenkoteam.kotlinlearning.exceptions.NotFoundException
 import com.marchenkoteam.kotlinlearning.forms.SkillForm
 import com.marchenkoteam.kotlinlearning.forms.ThemeForm
 import com.marchenkoteam.kotlinlearning.models.Skill
+import com.marchenkoteam.kotlinlearning.models.Test
+import com.marchenkoteam.kotlinlearning.models.Theme
 import com.marchenkoteam.kotlinlearning.models.ThemeSkill
 import com.marchenkoteam.kotlinlearning.repositories.SkillRepository
 import com.marchenkoteam.kotlinlearning.repositories.ThemeRepository
@@ -22,10 +24,9 @@ class ThemeService @Autowired constructor(private val authService: AuthService,
     fun findAll() = themeRepository.findAll()
             .map(::ThemeDto)
 
-    fun findById(id: Long): ThemeDto {
-        val theme = themeRepository.findById(id)
+    fun findById(id: Long): Theme {
+        return themeRepository.findById(id)
                 .orElseThrow { BadRequestException("No such theme.") }
-        return ThemeDto(theme)
     }
 
     fun save(themeForm: ThemeForm): ThemeDto {
@@ -60,6 +61,16 @@ class ThemeService @Autowired constructor(private val authService: AuthService,
                 .orElseThrow { NotFoundException("Skill not found") }
         val themeSkill = skill.themeSkills.first { it.theme.id == themeId }
         themeSkillRepository.delete(themeSkill)
-        return findById(themeId)
+        return ThemeDto(findById(themeId))
+    }
+
+    fun getTest(themeId: Long): Test {
+        val currentUser = authService.getMe()
+        val theme = findById(themeId)
+        return theme.tests.first { test ->
+            test.testSkill.map { it.skill }
+                    .filter { skill -> skill.userSkills.any { it.user.id == currentUser.id } }
+                    .any { skill -> skill.testSkills.first { it.test.id == test.id }.value >= skill.userSkills.first { it.user.id == currentUser.id }.value }
+        }
     }
 }

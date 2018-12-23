@@ -48,11 +48,10 @@ class AuthService @Autowired constructor(private val passwordEncoder: PasswordEn
         return tokenService.getToken(user)
     }
 
-    fun getMe(): UserDto {
+    fun getMe(): User {
         val auth = SecurityContextHolder.getContext().authentication
         val userDetails = auth.details as UserDetails
-        val user = userRepository.findByEmail(userDetails.username)
+        return userRepository.findByEmail(userDetails.username)
                 .orElseThrow { NotFoundException("No such user with email ${userDetails.username}.") }
-        return UserDto(user)
     }
 }
