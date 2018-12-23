@@ -3,18 +3,10 @@ package com.marchenkoteam.kotlinlearning.models
 import javax.persistence.*
 
 @Entity
-data class Test(@Id
-                @GeneratedValue(strategy = GenerationType.IDENTITY)
-                var id: Long = 0,
-                @Column(name = "time_limit")
-                var timeLimit: Long = 0,
-                var name: String = "",
-                var description: String = "",
-                @Column(nullable = false)
-                var rank: Int = 1,
-                @Column(nullable = false)
-                var inputData: String = "",
-                @Column(nullable = false)
-                var outputData: String = "",
-                @Column(name = "theme_id")
-                var themeId: Long = 0)
+class Test(@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long = 0,
+           @ManyToOne @JoinColumn(nullable = false) var theme: Theme,
+           @Column(nullable = false) var name: String = "",
+           @Column(nullable = false) var description: String = "",
+           @Column(nullable = false) var inputData: String = "",
+           @Column(nullable = false) var outputData: String = "",
+           @OneToMany(mappedBy = "test", cascade = [CascadeType.ALL]) var testSkill: Set<TestSkill> = HashSet())

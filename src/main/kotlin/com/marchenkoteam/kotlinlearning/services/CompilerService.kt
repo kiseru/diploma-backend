@@ -1,6 +1,7 @@
 package com.marchenkoteam.kotlinlearning.services
 
 import com.marchenkoteam.kotlinlearning.models.Test
+import com.marchenkoteam.kotlinlearning.models.TestStatus
 import com.marchenkoteam.kotlinlearning.models.UserTest
 import com.marchenkoteam.kotlinlearning.repositories.UserThemeRankRepository
 import com.marchenkoteam.kotlinlearning.security.details.UserDetailsImpl
@@ -40,10 +41,6 @@ class CompilerService(private val userTestService: UserTestService,
         val auth = SecurityContextHolder.getContext().authentication
         val userId = (auth.details as UserDetailsImpl).user.id
         val code = userTestService.findByTestIdAndUserId(test.id, userId).code
-        if (test.outputData == compile(code)) {
-            userTestService.changeStatus(UserTest.TestStatus.COMPLETED, test.id, userId)
-            userThemeRankRepository
-        }
     }
 
     fun compile(code: String) : String? {

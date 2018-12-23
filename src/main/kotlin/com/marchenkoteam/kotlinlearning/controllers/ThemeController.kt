@@ -1,6 +1,6 @@
 package com.marchenkoteam.kotlinlearning.controllers
 
-import com.marchenkoteam.kotlinlearning.dto.ThemeDto
+import com.marchenkoteam.kotlinlearning.forms.SkillForm
 import com.marchenkoteam.kotlinlearning.forms.ThemeForm
 import com.marchenkoteam.kotlinlearning.services.ThemeService
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,33 +13,40 @@ import org.springframework.web.bind.annotation.*
 class ThemeController @Autowired constructor(private val themeService: ThemeService) {
 
     @GetMapping
-    fun getThemes(): List<ThemeDto> = themeService.findAll()
+    fun list() = themeService.findAll()
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
-    fun saveTheme(@RequestHeader authToken: String,
-                  @RequestBody themeForm: ThemeForm): ThemeDto {
-        return themeService.save(themeForm)
-    }
+    fun create(@RequestHeader authToken: String, @RequestBody themeForm: ThemeForm) = themeService.save(themeForm)
 
     @GetMapping("/{id}")
-    fun getTheme(@PathVariable("id") id: Long): ThemeDto = themeService.findById(id)
+    fun retrieve(@PathVariable("id") id: Long) = themeService.findById(id)
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
-    fun updateTheme(@RequestHeader authToken: String,
-                    @RequestBody themeForm: ThemeForm): ThemeDto {
-        return themeService.save(themeForm)
-    }
+    fun update(@RequestHeader authToken: String, @RequestBody themeForm: ThemeForm,
+               @PathVariable("id") id: Long) = themeService.save(themeForm)
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    fun deleteTheme(@RequestHeader authToken: String,
-                    @PathVariable("id") id: Long) {
-        themeService.deleteById(id)
-    }
+    fun delete(@RequestHeader authToken: String, @PathVariable("id") id: Long) = themeService.deleteById(id)
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/{id}/skill")
+    fun addSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
+                 @RequestBody skillForm: SkillForm) = themeService.addSkill(skillForm, id)
+
+    /*@PreAuthorize("isAuthenticated()")
     @GetMapping("{id}/test")
-    fun getTest(@RequestHeader authToken: String, @PathVariable("id") id: Long) = themeService.getTest(id)
+    fun getTest(@RequestHeader authToken: String, @PathVariable("id") id: Long) = themeService.getTest(id)*/
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/{id}/skill")
+    fun updateSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
+                    @RequestBody skillForm: SkillForm) = themeService.updateSkill(skillForm, id)
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/{id}/skill")
+    fun deleteSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
+                    @RequestBody skillForm: SkillForm) = themeService.deleteSkill(skillForm, id)
 }
