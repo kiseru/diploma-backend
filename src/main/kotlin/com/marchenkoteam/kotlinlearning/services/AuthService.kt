@@ -1,7 +1,6 @@
 package com.marchenkoteam.kotlinlearning.services
 
 import com.marchenkoteam.kotlinlearning.dto.TokenDto
-import com.marchenkoteam.kotlinlearning.dto.UserDto
 import com.marchenkoteam.kotlinlearning.exceptions.InvalidLoginOrPasswordException
 import com.marchenkoteam.kotlinlearning.exceptions.NotFoundException
 import com.marchenkoteam.kotlinlearning.exceptions.PasswordsNotMatchedException

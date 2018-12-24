@@ -20,6 +20,7 @@ class AuthController @Autowired constructor(private val authService: AuthService
     @PostMapping("/login")
     fun login(@RequestBody loginForm: LoginForm) = authService.login(loginForm)
 
+
     @PostMapping("/sign_up")
     fun register(@RequestBody registrationForm: RegistrationForm) = authService.save(registrationForm)
 }
