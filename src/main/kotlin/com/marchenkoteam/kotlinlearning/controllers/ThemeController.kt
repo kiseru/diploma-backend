@@ -4,6 +4,7 @@ import com.marchenkoteam.kotlinlearning.dto.TestDto
 import com.marchenkoteam.kotlinlearning.dto.ThemeDto
 import com.marchenkoteam.kotlinlearning.forms.SkillForm
 import com.marchenkoteam.kotlinlearning.forms.ThemeForm
+import com.marchenkoteam.kotlinlearning.forms.UserTestForm
 import com.marchenkoteam.kotlinlearning.services.ThemeService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.prepost.PreAuthorize
@@ -51,4 +52,9 @@ class ThemeController @Autowired constructor(private val themeService: ThemeServ
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}/test")
     fun test(@PathVariable("id") id: Long, @RequestHeader authToken: String) = TestDto(themeService.getTest(id))
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/test")
+    fun sendTest(@PathVariable("id") id: Long, @RequestHeader authToken: String,
+                 @RequestBody userTestForm: UserTestForm) = themeService.sendTest(userTestForm, id)
 }

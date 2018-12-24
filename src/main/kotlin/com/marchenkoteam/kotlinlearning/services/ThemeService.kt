@@ -2,14 +2,15 @@ package com.marchenkoteam.kotlinlearning.services
 
 import com.marchenkoteam.kotlinlearning.dto.ThemeDto
 import com.marchenkoteam.kotlinlearning.exceptions.BadRequestException
+import com.marchenkoteam.kotlinlearning.exceptions.NotFoundException
+import com.marchenkoteam.kotlinlearning.forms.SkillForm
 import com.marchenkoteam.kotlinlearning.forms.ThemeForm
-import com.marchenkoteam.kotlinlearning.models.Skill
-import com.marchenkoteam.kotlinlearning.models.Test
-import com.marchenkoteam.kotlinlearning.models.Theme
-import com.marchenkoteam.kotlinlearning.models.ThemeSkill
+import com.marchenkoteam.kotlinlearning.forms.UserTestForm
+import com.marchenkoteam.kotlinlearning.models.*
 import com.marchenkoteam.kotlinlearning.repositories.SkillRepository
 import com.marchenkoteam.kotlinlearning.repositories.ThemeRepository
 import com.marchenkoteam.kotlinlearning.repositories.ThemeSkillRepository
+import com.marchenkoteam.kotlinlearning.repositories.UserThemeRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -17,7 +18,10 @@ import org.springframework.stereotype.Service
 class ThemeService @Autowired constructor(private val authService: AuthService,
                                           private val themeRepository: ThemeRepository,
                                           private val skillRepository: SkillRepository,
-                                          private val themeSkillRepository: ThemeSkillRepository) {
+                                          private val themeSkillRepository: ThemeSkillRepository,
+                                          private val compilerService: CompilerService,
+                                          private val userTestService: UserTestService,
+                                          private val userThemeRepository: UserThemeRepository) {
 
     fun findAll() = themeRepository.findAll()
             .map(::ThemeDto)
@@ -65,10 +69,16 @@ class ThemeService @Autowired constructor(private val authService: AuthService,
     fun getTest(themeId: Long): Test {
         val currentUser = authService.getMe()
         val theme = findById(themeId)
+        userThemeRepository.save(UserTheme(user = currentUser, theme = theme))
         return theme.tests.first { test ->
             test.testSkill.map { it.skill }
                     .filter { skill -> skill.userSkills.any { it.user.id == currentUser.id } }
                     .any { skill -> skill.testSkills.first { it.test.id == test.id }.value >= skill.userSkills.first { it.user.id == currentUser.id }.value }
         }
+    }
+
+    fun sendTest(userTestForm: UserTestForm, themeId: Long) {
+        val userTest = userTestService.create(userTestForm)
+        compilerService.checkTest(userTest)
     }
 }
