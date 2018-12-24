@@ -1,5 +1,6 @@
 package com.marchenkoteam.kotlinlearning.controllers
 
+import com.marchenkoteam.kotlinlearning.dto.UserDto
 import com.marchenkoteam.kotlinlearning.forms.LoginForm
 import com.marchenkoteam.kotlinlearning.forms.RegistrationForm
 import com.marchenkoteam.kotlinlearning.services.AuthService
@@ -14,7 +15,7 @@ class AuthController @Autowired constructor(private val authService: AuthService
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
-    fun getMe(@RequestHeader authToken: String) = authService.getMe()
+    fun getMe(@RequestHeader authToken: String) = UserDto(authService.getMe())
 
     @PostMapping("/login")
     fun login(@RequestBody loginForm: LoginForm) = authService.login(loginForm)

@@ -1,5 +1,7 @@
 package com.marchenkoteam.kotlinlearning.controllers
 
+import com.marchenkoteam.kotlinlearning.dto.TestDto
+import com.marchenkoteam.kotlinlearning.dto.ThemeDto
 import com.marchenkoteam.kotlinlearning.forms.SkillForm
 import com.marchenkoteam.kotlinlearning.forms.ThemeForm
 import com.marchenkoteam.kotlinlearning.services.ThemeService
@@ -20,7 +22,7 @@ class ThemeController @Autowired constructor(private val themeService: ThemeServ
     fun create(@RequestHeader authToken: String, @RequestBody themeForm: ThemeForm) = themeService.save(themeForm)
 
     @GetMapping("/{id}")
-    fun retrieve(@PathVariable("id") id: Long) = themeService.findById(id)
+    fun retrieve(@PathVariable("id") id: Long) = ThemeDto(themeService.findById(id))
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
@@ -36,10 +38,6 @@ class ThemeController @Autowired constructor(private val themeService: ThemeServ
     fun addSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
                  @RequestBody skillForm: SkillForm) = themeService.addSkill(skillForm, id)
 
-    /*@PreAuthorize("isAuthenticated()")
-    @GetMapping("{id}/test")
-    fun getTest(@RequestHeader authToken: String, @PathVariable("id") id: Long) = themeService.getTest(id)*/
-
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}/skill")
     fun updateSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
@@ -49,4 +47,8 @@ class ThemeController @Autowired constructor(private val themeService: ThemeServ
     @DeleteMapping("/{id}/skill")
     fun deleteSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
                     @RequestBody skillForm: SkillForm) = themeService.deleteSkill(skillForm, id)
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{id}/test")
+    fun test(@PathVariable("id") id: Long, @RequestHeader authToken: String) = TestDto(themeService.getTest(id))
 }

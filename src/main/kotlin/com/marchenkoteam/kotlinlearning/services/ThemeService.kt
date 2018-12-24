@@ -1,33 +1,30 @@
 package com.marchenkoteam.kotlinlearning.services
 
-import com.marchenkoteam.kotlinlearning.dto.TestDto
 import com.marchenkoteam.kotlinlearning.dto.ThemeDto
 import com.marchenkoteam.kotlinlearning.exceptions.BadRequestException
-import com.marchenkoteam.kotlinlearning.exceptions.NotFoundException
-import com.marchenkoteam.kotlinlearning.forms.SkillForm
 import com.marchenkoteam.kotlinlearning.forms.ThemeForm
 import com.marchenkoteam.kotlinlearning.models.Skill
+import com.marchenkoteam.kotlinlearning.models.Test
+import com.marchenkoteam.kotlinlearning.models.Theme
 import com.marchenkoteam.kotlinlearning.models.ThemeSkill
-import com.marchenkoteam.kotlinlearning.repositories.*
-import com.marchenkoteam.kotlinlearning.security.details.UserDetailsImpl
+import com.marchenkoteam.kotlinlearning.repositories.SkillRepository
+import com.marchenkoteam.kotlinlearning.repositories.ThemeRepository
+import com.marchenkoteam.kotlinlearning.repositories.ThemeSkillRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 
 @Service
-class ThemeService @Autowired constructor(private val themeRepository: ThemeRepository,
+class ThemeService @Autowired constructor(private val authService: AuthService,
+                                          private val themeRepository: ThemeRepository,
                                           private val skillRepository: SkillRepository,
-                                          private val themeSkillRepository: ThemeSkillRepository,
-                                          private val userThemeRankRepository: UserThemeRankRepository,
-                                          private val userTestRepository: UserTestRepository) {
+                                          private val themeSkillRepository: ThemeSkillRepository) {
 
     fun findAll() = themeRepository.findAll()
             .map(::ThemeDto)
 
-    fun findById(id: Long): ThemeDto {
-        val theme = themeRepository.findById(id)
+    fun findById(id: Long): Theme {
+        return themeRepository.findById(id)
                 .orElseThrow { BadRequestException("No such theme.") }
-        return ThemeDto(theme)
     }
 
     fun save(themeForm: ThemeForm): ThemeDto {
@@ -36,19 +33,6 @@ class ThemeService @Autowired constructor(private val themeRepository: ThemeRepo
     }
 
     fun deleteById(id: Long) = themeRepository.deleteById(id)
-/*
-    fun getTest(id: Long): TestDto {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userDetails = auth.details as UserDetailsImpl
-        val theme = themeRepository.findById(id)
-                .orElseThrow { BadRequestException("No such theme.") }
-        val themeTestList = theme.tests
-        val rank = userThemeRankRepository.findByUserIdAndThemeId(userDetails.user.id, id)?.rank
-        val userTestsList = userTestRepository.getByUserId(userDetails.user.id).map { it.test }
-        val testList = themeTestList.intersect(userTestsList)
-        val resultList = testList.filter { it.rank == rank }.filter { it.themeId == theme.id } as ArrayList
-        return TestDto(resultList.random())
-    }*/
 
     fun addSkill(skillForm: SkillForm, themeId: Long): ThemeDto {
         val skill = skillRepository.findByName(skillForm.name)
@@ -75,6 +59,16 @@ class ThemeService @Autowired constructor(private val themeRepository: ThemeRepo
                 .orElseThrow { NotFoundException("Skill not found") }
         val themeSkill = skill.themeSkills.first { it.theme.id == themeId }
         themeSkillRepository.delete(themeSkill)
-        return findById(themeId)
+        return ThemeDto(findById(themeId))
+    }
+
+    fun getTest(themeId: Long): Test {
+        val currentUser = authService.getMe()
+        val theme = findById(themeId)
+        return theme.tests.first { test ->
+            test.testSkill.map { it.skill }
+                    .filter { skill -> skill.userSkills.any { it.user.id == currentUser.id } }
+                    .any { skill -> skill.testSkills.first { it.test.id == test.id }.value >= skill.userSkills.first { it.user.id == currentUser.id }.value }
+        }
     }
 }
