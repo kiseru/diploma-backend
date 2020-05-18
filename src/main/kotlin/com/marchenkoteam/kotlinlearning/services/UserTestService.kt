@@ -18,7 +18,7 @@ class UserTestService @Autowired constructor(private val userTestRepository: Use
     fun create(userTestForm: UserTestForm): UserTest {
         val test = testRepository.getOne(userTestForm.test)
         val user = userRepository.getOne(userTestForm.user)
-        val userTest = UserTest(userTestForm.id, user, test, userTestForm.code)
+        val userTest = UserTest(user, test, userTestForm.code)
         return userTestRepository.save(userTest)
     }
 }
