@@ -1,7 +1,6 @@
 package com.marchenkoteam.kotlinlearning.services
 
 import com.marchenkoteam.kotlinlearning.models.TestStatus
-import com.marchenkoteam.kotlinlearning.models.UserSkill
 import com.marchenkoteam.kotlinlearning.models.UserTest
 import com.marchenkoteam.kotlinlearning.repositories.UserRepository
 import org.springframework.stereotype.Service
@@ -45,21 +44,6 @@ class CompilerService(private val userRepository: UserRepository) {
         val code = userTest.code
         if (test.outputData == compile(code)) {
             userTest.status = TestStatus.PASSED
-            val testSkills = test.testSkill
-            var userSkills = user.userSkills
-
-            testSkills.forEach {testSkill ->
-                val userSkill = userSkills.find { it.skill.id ==  testSkill.skill.id}
-                if (userSkill != null) {
-                    if (userSkill.value < testSkill.value) {
-                        userSkill.value = testSkill.value
-                    }
-                }
-                else {
-                    userSkills = userSkills.plus(UserSkill(value = testSkill.value, skill = testSkill.skill, user = user))
-                }
-                user.userSkills = userSkills
-            }
         }
         userRepository.save(user)
     }

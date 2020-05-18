@@ -34,25 +34,6 @@ class ThemeController @Autowired constructor(private val themeService: ThemeServ
     @DeleteMapping("/{id}")
     fun delete(@RequestHeader authToken: String, @PathVariable("id") id: Long) = themeService.deleteById(id)
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/{id}/skill")
-    fun addSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
-                 @RequestBody skillForm: SkillForm) = themeService.addSkill(skillForm, id)
-
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("/{id}/skill")
-    fun updateSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
-                    @RequestBody skillForm: SkillForm) = themeService.updateSkill(skillForm, id)
-
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/{id}/skill")
-    fun deleteSkill(@PathVariable("id") id: Long, @RequestHeader authToken: String,
-                    @RequestBody skillForm: SkillForm) = themeService.deleteSkill(skillForm, id)
-
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}/test")
-    fun test(@PathVariable("id") id: Long, @RequestHeader authToken: String) = TestDto(themeService.getTest(id))
-
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/test")
     fun sendTest(@PathVariable("id") id: Long, @RequestHeader authToken: String,

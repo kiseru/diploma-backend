@@ -8,5 +8,4 @@ class Test(@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long 
            @Column(nullable = false) var name: String = "",
            @Column(nullable = false) var description: String = "",
            @Column(nullable = false) var inputData: String = "",
-           @Column(nullable = false) var outputData: String = "",
-           @OneToMany(mappedBy = "test", cascade = [CascadeType.ALL]) var testSkill: Set<TestSkill> = HashSet())
+           @Column(nullable = false) var outputData: String = "")
