@@ -18,7 +18,7 @@ class TestController @Autowired constructor(private val testService: TestService
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
-    fun retrieve(@RequestHeader authToken: String, @PathVariable("id") id: Long): TestDto = testService.findById(id)
+    fun retrieve(@RequestHeader authToken: String, @PathVariable("id") id: String): TestDto = testService.findById(id)
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
@@ -31,5 +31,5 @@ class TestController @Autowired constructor(private val testService: TestService
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    fun delete(@RequestHeader authToken: String, @PathVariable("id") id: Long) = testService.deleteById(id)
+    fun delete(@RequestHeader authToken: String, @PathVariable("id") id: String) = testService.deleteById(id)
 }

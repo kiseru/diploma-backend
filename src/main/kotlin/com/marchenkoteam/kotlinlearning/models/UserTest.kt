@@ -1,32 +1,12 @@
 package com.marchenkoteam.kotlinlearning.models
 
-import java.io.Serializable
-import java.util.*
-import javax.persistence.*
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.CompoundIndex
+import org.springframework.data.mongodb.core.index.CompoundIndexes
+import org.springframework.data.mongodb.core.mapping.Document
 
-@Entity
-@IdClass(UserTestId::class)
-class UserTest(@Id @ManyToOne @JoinColumn(nullable = false) var user: User,
-               @Id @ManyToOne @JoinColumn(nullable = false) var test: Test,
-               @Column(nullable = false) var code: String = "",
-               @Column(nullable = false) var createdAt: Date = Date(),
-               @Column(nullable = false) @Enumerated(EnumType.ORDINAL) var status: TestStatus = TestStatus.FAILED)
-
-private class UserTestId(var user: User,
-                         var test: Test) : Serializable {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
-
-        if (other !is UserTestId) {
-            return false
-        }
-
-        return user.id == other.user.id && test.id == other.test.id
-    }
-
-    override fun hashCode(): Int {
-        return Objects.hash(user.id, test.id)
-    }
-}
+@Document
+@CompoundIndexes(
+        CompoundIndex(name = "user_test", def = "{'userId': 1, 'testId': 1}", unique = true)
+)
+class UserTest(@Id var id: String?, var userId: String, var testId: String, var testStatus: TestStatus)

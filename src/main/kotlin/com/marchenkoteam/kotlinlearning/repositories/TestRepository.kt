@@ -1,6 +1,8 @@
 package com.marchenkoteam.kotlinlearning.repositories
 
 import com.marchenkoteam.kotlinlearning.models.Test
-import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.mongodb.repository.MongoRepository
 
-interface TestRepository : JpaRepository<Test, Long>
+interface TestRepository : MongoRepository<Test, String> {
+    fun findAllByThemeId(themeId: String): List<Test>
+}

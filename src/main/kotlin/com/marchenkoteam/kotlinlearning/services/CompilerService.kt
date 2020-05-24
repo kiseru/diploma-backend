@@ -35,17 +35,17 @@ class CompilerService(private val userRepository: UserRepository) {
     }
 
     fun checkTest(userTest: UserTest) {
-        File(path).mkdir()
-        val test = userTest.test
-        val user = userTest.user
-        val inputFile = File("$path\\inputFile")
-        inputFile.createNewFile()
-        inputFile.writeText(test.inputData)
-        val code = userTest.code
-        if (test.outputData == compile(code)) {
-            userTest.status = TestStatus.PASSED
-        }
-        userRepository.save(user)
+//        File(path).mkdir()
+////        val test = userTest.test
+////        val user = userTest.user
+//        val inputFile = File("$path\\inputFile")
+//        inputFile.createNewFile()
+////        inputFile.writeText(test.inputData)
+////        val code = userTest.code
+////        if (test.outputData == compile(code)) {
+////            userTest.status = TestStatus.PASSED
+////        }
+////        userRepository.save(user)
     }
 
     fun compile(code: String): String? {

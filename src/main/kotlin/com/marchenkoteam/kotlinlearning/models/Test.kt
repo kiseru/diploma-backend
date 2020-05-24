@@ -1,11 +1,25 @@
 package com.marchenkoteam.kotlinlearning.models
 
-import javax.persistence.*
+import com.marchenkoteam.kotlinlearning.forms.TestForm
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 
-@Entity
-class Test(@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long = 0,
-           @ManyToOne @JoinColumn(nullable = false) var theme: Theme,
-           @Column(nullable = false) var name: String = "",
-           @Column(nullable = false) var description: String = "",
-           @Column(nullable = false) var inputData: String = "",
-           @Column(nullable = false) var outputData: String = "")
+@Document
+class Test(@Id var id: String?,
+           var name: String,
+           var description: String,
+           var inputData: String,
+           var outputData: String,
+           var themeId: String) {
+
+    companion object {
+        fun from(testForm: TestForm): Test {
+            return Test(testForm.id,
+                        testForm.name,
+                        testForm.description,
+                        testForm.inputData,
+                        testForm.outputData,
+                        testForm.themeId)
+        }
+    }
+}

@@ -1,13 +1,14 @@
 package com.marchenkoteam.kotlinlearning.models
 
 import com.marchenkoteam.kotlinlearning.security.role.Role
-import javax.persistence.*
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.Indexed
+import org.springframework.data.mongodb.core.mapping.Document
 
-@Entity
-@Table(name = "app_user")
-class User(@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long = 0,
+@Document
+class User(@Id var id: String? = null,
            var firstName: String = "",
            var lastName: String = "",
-           @Column(nullable = false, unique = true) var email: String = "",
-           @Column(nullable = false) var password: String = "",
-           @Column(nullable = false) @Enumerated(EnumType.STRING) var role: Role = Role.USER)
+           @Indexed(unique = true) var email: String = "",
+           var password: String = "",
+           var role: Role = Role.USER)

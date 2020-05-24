@@ -1,8 +1,6 @@
 package com.marchenkoteam.kotlinlearning.controllers
 
-import com.marchenkoteam.kotlinlearning.dto.TestDto
 import com.marchenkoteam.kotlinlearning.dto.ThemeDto
-import com.marchenkoteam.kotlinlearning.forms.SkillForm
 import com.marchenkoteam.kotlinlearning.forms.ThemeForm
 import com.marchenkoteam.kotlinlearning.forms.UserTestForm
 import com.marchenkoteam.kotlinlearning.services.ThemeService
@@ -23,7 +21,7 @@ class ThemeController @Autowired constructor(private val themeService: ThemeServ
     fun create(@RequestHeader authToken: String, @RequestBody themeForm: ThemeForm) = themeService.save(themeForm)
 
     @GetMapping("/{id}")
-    fun retrieve(@PathVariable("id") id: Long) = ThemeDto(themeService.findById(id))
+    fun retrieve(@PathVariable("id") id: String) = themeService.findById(id)
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
@@ -32,7 +30,7 @@ class ThemeController @Autowired constructor(private val themeService: ThemeServ
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    fun delete(@RequestHeader authToken: String, @PathVariable("id") id: Long) = themeService.deleteById(id)
+    fun delete(@RequestHeader authToken: String, @PathVariable("id") id: String) = themeService.deleteById(id)
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/test")

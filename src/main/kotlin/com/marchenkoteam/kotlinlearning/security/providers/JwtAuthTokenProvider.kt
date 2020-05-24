@@ -35,7 +35,7 @@ class JwtAuthTokenProvider : AuthenticationProvider {
         }
 
         val userDetails = UserDetailsImpl(User().apply {
-            id = body["sub"].toString().toLong()
+            id = body["sub"].toString()
             email = body["email"].toString()
             role = Role.valueOf(body["role"].toString())
         })

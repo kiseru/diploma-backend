@@ -1,6 +1,6 @@
 package com.marchenkoteam.kotlinlearning.models
 
-enum class TestStatus(val id: Int = 0) {
-    FAILED(0),
-    PASSED(1)
+enum class TestStatus {
+    FAILED,
+    PASSED
 }

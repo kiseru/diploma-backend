@@ -13,12 +13,16 @@ class UserTestService @Autowired constructor(private val userTestRepository: Use
                                              private val testRepository: TestRepository,
                                              private val userRepository: UserRepository) {
 
-    fun findByTestIdAndUserId(testId: Long, userId: Long): UserTest = userTestRepository.getByTestIdAndUserId(testId, userId)
+    fun findByTestIdAndUserId(testId: Long, userId: Long): UserTest? {
+//        return userTestRepository.getByTestIdAndUserId(testId, userId)
+        return null
+    }
 
-    fun create(userTestForm: UserTestForm): UserTest {
-        val test = testRepository.getOne(userTestForm.test)
-        val user = userRepository.getOne(userTestForm.user)
-        val userTest = UserTest(user, test, userTestForm.code)
-        return userTestRepository.save(userTest)
+    fun create(userTestForm: UserTestForm): UserTest? {
+//        val test = testRepository.getOne(userTestForm.test)
+//        val user = userRepository.getOne(userTestForm.user)
+//        val userTest = UserTest(user, test, userTestForm.code)
+//        return userTestRepository.save(userTest)
+        return null
     }
 }

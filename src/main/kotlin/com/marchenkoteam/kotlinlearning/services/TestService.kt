@@ -2,7 +2,6 @@ package com.marchenkoteam.kotlinlearning.services
 
 import com.marchenkoteam.kotlinlearning.dto.TestDto
 import com.marchenkoteam.kotlinlearning.exceptions.BadRequestException
-import com.marchenkoteam.kotlinlearning.exceptions.NotFoundException
 import com.marchenkoteam.kotlinlearning.forms.TestForm
 import com.marchenkoteam.kotlinlearning.models.Test
 import com.marchenkoteam.kotlinlearning.repositories.TestRepository
@@ -14,24 +13,21 @@ import org.springframework.stereotype.Service
 class TestService @Autowired constructor(private val testRepository: TestRepository,
                                          private val themeRepository: ThemeRepository) {
 
-    fun findById(id: Long): TestDto {
+    fun findById(id: String): TestDto {
         val test = testRepository.findById(id)
                 .orElseThrow { BadRequestException("No such test.") }
-        return TestDto(test)
+        return TestDto.from(test)
     }
 
-    fun findAll() = testRepository.findAll().map(::TestDto)
+    fun findAll() = testRepository.findAll().map(TestDto.Companion::from)
 
-    fun save(testForm: TestForm): TestDto {
-        val theme = themeRepository.findById(testForm.theme)
-                .orElseThrow { NotFoundException("Theme not found.") }
-        var test = Test(id = testForm.id, theme = theme, name = testForm.name, description = testForm.description,
-                inputData = testForm.inputData, outputData = testForm.outputData)
+    fun save(testForm: TestForm): TestDto? {
+        var test = Test.from(testForm)
         test = testRepository.save(test)
-        return TestDto(test)
+        return TestDto.from(test)
     }
 
-    fun deleteById(id: Long) {
+    fun deleteById(id: String) {
         testRepository.deleteById(id)
     }
 }

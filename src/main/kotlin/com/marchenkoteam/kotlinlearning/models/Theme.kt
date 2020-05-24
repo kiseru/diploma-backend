@@ -1,9 +1,8 @@
 package com.marchenkoteam.kotlinlearning.models
 
-import javax.persistence.*
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 
-@Entity
-class Theme(@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Long = 0,
-            @Column(nullable = false, unique = true) var name: String = "",
-            @Column(nullable = false) var description: String = "",
-            @OneToMany(mappedBy = "theme", cascade = [CascadeType.ALL]) val tests: Set<Test> = HashSet())
+
+@Document
+class Theme(@Id var id: String? = null, var name: String = "", var description: String = "")

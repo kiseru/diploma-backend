@@ -1,12 +1,14 @@
 package com.marchenkoteam.kotlinlearning.dto
 
-import com.marchenkoteam.kotlinlearning.models.Test
 import com.marchenkoteam.kotlinlearning.models.Theme
 
-data class ThemeDto(val id: Long, val name: String, val description: String, val tests: List<TestDto>) {
-    constructor(theme: Theme) : this(theme.id, theme.name, theme.description, theme.tests.map(::TestDto))
+data class ThemeDto(val id: String?, val name: String, val description: String, val tests: List<TestDto>) {
+    companion object {
+        fun from(theme: Theme, tests: List<TestDto>): ThemeDto = ThemeDto(theme.id,
+                                                                          theme.name,
+                                                                          theme.description,
+                                                                          tests)
 
-    data class TestDto(val id: Long, val name: String, val description: String) {
-        constructor(test: Test) : this(test.id, test.name, test.description)
+        fun from(theme: Theme): ThemeDto = from(theme, ArrayList())
     }
 }

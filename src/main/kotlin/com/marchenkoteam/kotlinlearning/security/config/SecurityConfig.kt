@@ -18,16 +18,9 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class SecurityConfig : WebSecurityConfigurerAdapter() {
-
-    @Autowired
-    private lateinit var jwtAuthTokenFilter: JwtAuthTokenFilter
-
-    @Autowired
-    private lateinit var jwtAuthTokenProvider: JwtAuthTokenProvider
-
-    @Autowired
-    private lateinit var userDetailsService: UserDetailsServiceImpl
+class SecurityConfig @Autowired constructor(private val jwtAuthTokenFilter: JwtAuthTokenFilter,
+                                            private val jwtAuthTokenProvider: JwtAuthTokenProvider,
+                                            private var userDetailsService: UserDetailsServiceImpl) : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()
