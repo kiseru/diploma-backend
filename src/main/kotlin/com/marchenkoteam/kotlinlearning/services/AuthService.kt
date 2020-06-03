@@ -47,7 +47,7 @@ class AuthService @Autowired constructor(private val passwordEncoder: PasswordEn
         return tokenService.getToken(user)
     }
 
-    fun getMe(): User {
+    fun getCurrentUser(): User {
         val auth = SecurityContextHolder.getContext().authentication
         val userDetails = auth.details as UserDetails
         return userRepository.findByEmail(userDetails.username)

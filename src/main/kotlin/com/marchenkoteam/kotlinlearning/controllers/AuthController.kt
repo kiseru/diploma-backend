@@ -15,7 +15,7 @@ class AuthController @Autowired constructor(private val authService: AuthService
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
-    fun getMe(@RequestHeader authToken: String) = UserDto(authService.getMe())
+    fun getMe(@RequestHeader authToken: String) = UserDto(authService.getCurrentUser())
 
     @PostMapping("/login")
     fun login(@RequestBody loginForm: LoginForm) = authService.login(loginForm)

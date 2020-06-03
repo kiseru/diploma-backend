@@ -1,6 +1,7 @@
 package com.marchenkoteam.kotlinlearning.controllers
 
 import com.marchenkoteam.kotlinlearning.dto.TestDto
+import com.marchenkoteam.kotlinlearning.forms.TestAnswer
 import com.marchenkoteam.kotlinlearning.forms.TestForm
 import com.marchenkoteam.kotlinlearning.services.TestService
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,4 +33,10 @@ class TestController @Autowired constructor(private val testService: TestService
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     fun delete(@RequestHeader authToken: String, @PathVariable("id") id: String) = testService.deleteById(id)
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/pass")
+    fun passTest(@RequestHeader authToken: String,
+                 @PathVariable("id") id: String,
+                 @RequestBody testAnswer: TestAnswer) = testService.checkTest(id, testAnswer)
 }
