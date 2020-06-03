@@ -1,2 +1,3 @@
 app:
   jwtSecret: qwerty007
+  userFilesDir: compiler_test

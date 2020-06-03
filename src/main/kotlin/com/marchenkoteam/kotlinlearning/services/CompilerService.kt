@@ -1,57 +1,42 @@
 package com.marchenkoteam.kotlinlearning.services
 
-import com.marchenkoteam.kotlinlearning.models.TestStatus
-import com.marchenkoteam.kotlinlearning.models.UserTest
-import com.marchenkoteam.kotlinlearning.repositories.UserRepository
+import com.marchenkoteam.kotlinlearning.forms.TestAnswer
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.io.File
-import java.io.IOException
-import java.util.concurrent.TimeUnit
+import java.io.PrintWriter
 
 @Service
-class CompilerService(private val userRepository: UserRepository) {
+class CompilerService @Autowired constructor(private val authService: AuthService) {
 
-    private final val path = ".\\src\\main\\resources\\compiler_temp"
+    @Value("\${app.userFilesDir}")
+    private lateinit var userFilesDir: String
 
-    fun runCommand(command: String,
-                   timeoutAmount: Long = 60,
-                   timeoutUnit: TimeUnit = TimeUnit.SECONDS): String? {
-        return try {
-            ProcessBuilder(*command.split("\\s".toRegex()).toTypedArray())
-                    .directory(File(path))
-                    .redirectOutput(ProcessBuilder.Redirect.PIPE)
-                    .redirectError(ProcessBuilder.Redirect.PIPE)
-                    .start().apply {
-                        waitFor(timeoutAmount, timeoutUnit)
-                    }.inputStream.bufferedReader().readText().dropLast(2)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            null
-        }
-        //clearing folder
-        finally {
-            File(path).deleteRecursively()
+    fun runTest(testId: String, testAnswer: TestAnswer) {
+        createFile(testId, testAnswer.code)
+    }
+
+    private fun createFile(testId: String, code: String) {
+        val currentUserId = authService.getCurrentUser().id ?: throw IllegalArgumentException("userId must not be null")
+        val testFile = File(generateFilename(currentUserId, testId))
+        testFile.createNewFile()
+        val fileWriter = PrintWriter(testFile)
+        fileWriter.use {
+            it.write(code)
         }
     }
 
-    fun checkTest(userTest: UserTest) {
-//        File(path).mkdir()
-////        val test = userTest.test
-////        val user = userTest.user
-//        val inputFile = File("$path\\inputFile")
-//        inputFile.createNewFile()
-////        inputFile.writeText(test.inputData)
-////        val code = userTest.code
-////        if (test.outputData == compile(code)) {
-////            userTest.status = TestStatus.PASSED
-////        }
-////        userRepository.save(user)
+    private fun generateFilename(userId: String, testId: String): String {
+        val dirPath = "${userFilesDir}/${userId}"
+        checkDir(dirPath)
+        return "${dirPath}/${testId}_${System.currentTimeMillis()}.kt"
     }
 
-    fun compile(code: String): String? {
-        val sourceFile = File("$path\\sourceFile.kt")
-        sourceFile.createNewFile()
-        sourceFile.writeText(code)
-        return runCommand("cmd /c kotlinc sourceFile.kt -include-runtime -d source.jar && java -jar source.jar")
+    private fun checkDir(dirPath: String) {
+        val dir = File(dirPath)
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
     }
 }

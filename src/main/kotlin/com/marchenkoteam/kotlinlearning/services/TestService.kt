@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class TestService @Autowired constructor(private val authService: AuthService,
+                                         private val compilerService: CompilerService,
                                          private val testRepository: TestRepository,
                                          private val userTestRepository: UserTestRepository) {
 
@@ -37,6 +38,7 @@ class TestService @Autowired constructor(private val authService: AuthService,
 
     fun checkTest(testId: String, testAnswer: TestAnswer): UserTest {
         val currentUser = authService.getCurrentUser()
+        compilerService.runTest(testId, testAnswer)
         val userTest = userTestRepository.findByUserIdAndTestId(currentUser.id!!, testId)
                 .map {
                     it.code = testAnswer.code
