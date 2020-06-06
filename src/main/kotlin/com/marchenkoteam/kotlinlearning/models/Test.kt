@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 class Test(@Id var id: String?,
            var name: String,
            var description: String,
-           var inputData: String,
+           var inputData: String?,
            var outputData: String,
            var themeId: String) {
 
