@@ -1,33 +1,38 @@
 package com.marchenkoteam.kotlinlearning.services
 
 import com.marchenkoteam.kotlinlearning.forms.TestAnswer
-import org.springframework.beans.factory.annotation.Autowired
+import com.marchenkoteam.kotlinlearning.models.Test
+import com.marchenkoteam.kotlinlearning.models.TestStatus
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.io.PrintWriter
 
 @Service
-class CompilerService @Autowired constructor(private val authService: AuthService) {
+class CompilerService {
 
     @Value("\${app.userFilesDir}")
     private lateinit var userFilesDir: String
 
-    fun runTest(testId: String, testAnswer: TestAnswer) {
-        val filename = createFile(testId, testAnswer.code)
-        compileFile(filename)
+    fun runTest(currentUserId: String, testId: String, testAnswer: TestAnswer, test: Test): TestStatus {
+        val userDirPath = getUserDirPath(currentUserId)
+        val filename = generateFilename(testId)
+        createFile(userDirPath, filename, testAnswer.code)
+        compileFile(userDirPath, filename)
+        val testResult = checkAnswer(userDirPath, filename, test.outputData)
+        cleanTestData(userDirPath, filename)
+        return testResult
     }
 
-    private fun createFile(testId: String, code: String): String {
-        val currentUserId = authService.getCurrentUser().id ?: throw IllegalArgumentException("userId must not be null")
-        val filename = generateFilename(testId)
-        val testFile = File("${getUserDirPath(currentUserId)}/$filename.kt")
+    private fun createFile(userDirPath: String, filename: String, code: String) {
+        val testFile = File("$userDirPath/$filename.kt")
         testFile.createNewFile()
         val fileWriter = PrintWriter(testFile)
         fileWriter.use {
             it.write(code)
         }
-        return filename
     }
 
     private fun generateFilename(testId: String): String {
@@ -47,13 +52,41 @@ class CompilerService @Autowired constructor(private val authService: AuthServic
         }
     }
 
-    private fun compileFile(filename: String) {
+    private fun compileFile(userDirPath: String, filename: String) {
         val runtime = Runtime.getRuntime()
-        val currentUserId = authService.getCurrentUser().id
-                ?: throw java.lang.IllegalArgumentException("There is no id in user entity")
-        val file = File(getUserDirPath(currentUserId))
-        println(file.exists())
-        val process = runtime.exec("cmd.exe /c kotlinc $filename.kt -d $filename.jar", null, file)
+        val path = File(userDirPath)
+        val process = runtime.exec("cmd.exe /c kotlinc $filename.kt -d $filename.jar", null, path)
         process.waitFor()
+    }
+
+    private fun checkAnswer(userDirPath: String, filename: String, expectedData: String): TestStatus {
+        val runtime = Runtime.getRuntime()
+        val path = File(userDirPath)
+        val process = runtime.exec("cmd.exe /c java -jar $filename.jar", null, path)
+        process.waitFor()
+        val reader = BufferedReader(InputStreamReader(process.inputStream))
+        val expectedLines = expectedData.split("\n")
+        reader.use {
+            expectedLines.forEach { expectedLine ->
+                if (!it.ready()) {
+                    return TestStatus.FAILED
+                }
+
+                val line = reader.readLine()
+                if (line != expectedLine) {
+                    return TestStatus.FAILED
+                }
+            }
+        }
+
+        return TestStatus.PASSED
+    }
+
+    private fun cleanTestData(userDirPath: String, filename: String) {
+        val ktFile = File("$userDirPath/$filename.kt")
+        ktFile.delete()
+
+        val jarFile = File("$userDirPath/$filename.jar")
+        jarFile.delete()
     }
 }
