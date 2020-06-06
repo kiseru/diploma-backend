@@ -70,22 +70,7 @@ class CompilerService {
             return TestStatus.FAILED
         }
 
-        val reader = BufferedReader(InputStreamReader(process.inputStream))
-        val expectedLines = test.outputData.split("\n")
-        reader.use {
-            expectedLines.forEach { expectedLine ->
-                if (!it.ready()) {
-                    return TestStatus.FAILED
-                }
-
-                val line = reader.readLine()
-                if (line != expectedLine) {
-                    return TestStatus.FAILED
-                }
-            }
-        }
-
-        return TestStatus.PASSED
+        return checkOutputData(process.inputStream, test.outputData)
     }
 
     private fun cleanTestData(userDirPath: String, filename: String) {
@@ -100,5 +85,24 @@ class CompilerService {
         outputStream.use {
             it.write(inputData.toByteArray())
         }
+    }
+
+    private fun checkOutputData(inputStream: InputStream, expectedData: String): TestStatus {
+        val reader = BufferedReader(InputStreamReader(inputStream))
+        val expectedLines = expectedData.split("\n")
+        reader.use {
+            expectedLines.forEach { expectedLine ->
+                if (!it.ready()) {
+                    return TestStatus.FAILED
+                }
+
+                val line = reader.readLine()
+                if (line != expectedLine) {
+                    return TestStatus.FAILED
+                }
+            }
+        }
+
+        return TestStatus.PASSED
     }
 }
