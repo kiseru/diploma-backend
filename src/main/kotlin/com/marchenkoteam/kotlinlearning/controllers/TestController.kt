@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/tests")
 class TestController @Autowired constructor(private val testService: TestService) {
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping()
     fun list(@RequestHeader authToken: String): List<TestDto> = testService.findAll()
 
