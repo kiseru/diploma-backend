@@ -8,8 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document
 class Test(@Id var id: String?,
            var name: String,
            var description: String,
-           var inputData: String?,
-           var outputData: String,
            var themeId: String) {
 
     companion object {
@@ -17,8 +15,6 @@ class Test(@Id var id: String?,
             return Test(testForm.id,
                         testForm.name,
                         testForm.description,
-                        testForm.inputData,
-                        testForm.outputData,
                         testForm.themeId)
         }
     }

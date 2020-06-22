@@ -3,12 +3,15 @@ package com.marchenkoteam.kotlinlearning.services
 import com.marchenkoteam.kotlinlearning.forms.TestAnswer
 import com.marchenkoteam.kotlinlearning.models.Test
 import com.marchenkoteam.kotlinlearning.models.TestStatus
+import com.marchenkoteam.kotlinlearning.models.UnitTest
+import com.marchenkoteam.kotlinlearning.repositories.UnitTestRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.io.*
 
 @Service
-class CompilerService {
+class CompilerService @Autowired constructor(private val unitTestRepository: UnitTestRepository) {
 
     @Value("\${app.userFilesDir}")
     private lateinit var userFilesDir: String
@@ -59,18 +62,28 @@ class CompilerService {
     private fun checkAnswer(userDirPath: String, filename: String, test: Test): TestStatus {
         val runtime = Runtime.getRuntime()
         val path = File(userDirPath)
-        val inputData = test.inputData
-        val process = runtime.exec("cmd.exe /c java -jar $filename.jar", null, path)
-        if (inputData != null) {
-            writeInputData(process.outputStream, inputData)
-        }
+        val unitTests = unitTestRepository.findAllByTestId(test.id!!)
+        val passed = unitTests.asSequence().map {
+            val process = runtime.exec("cmd.exe /c java -jar $filename.jar", null, path)
+            val inputData = it.inputData
+            if (inputData != null) {
+                writeInputData(process.outputStream, inputData)
+            }
 
-        val processResult = process.waitFor()
-        if (processResult != 0) {
-            return TestStatus.FAILED
+            val processResult = process.waitFor()
+            if (processResult != 0) {
+                 TestStatus.FAILED
+            } else {
+                checkOutputData(process.inputStream, it.outputData)
+            }
         }
+                .all { it == TestStatus.PASSED }
 
-        return checkOutputData(process.inputStream, test.outputData)
+        return if (passed) {
+            TestStatus.PASSED
+        } else {
+            TestStatus.FAILED
+        }
     }
 
     private fun cleanTestData(userDirPath: String, filename: String) {
